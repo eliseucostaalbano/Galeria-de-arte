@@ -1,5 +1,33 @@
 import * as THREE from 'three';
 
+const imagens = [
+  'socrates.jpg',
+  'stars.jpg',
+  'wave.jpg',
+  'spring.jpg',
+  'mountain.jpg',
+  'sunday.jpg'
+];
+
+const titulos = [
+  'a Morte de Sócrates',
+  'A Noite Estrelada',
+  'A Grande Onda de Kanagawa',
+  'Efeito da Primavera, Giverny',
+  'Montanha Corcoran',
+  'Um Domingo na Grande Jatte'
+];
+
+const artistas = [
+  'Jacques-Louis David',
+  'Vincent Van Gogh',
+  'Katsushika Hokusai',
+  'Claude Monet',
+  'Albert Bierstadt',
+  'George Seurat'
+];
+
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
@@ -23,3 +51,9 @@ function animate() {
   renderer.render( cena, camera );
 
 }
+
+window.addEventListener( 'resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+});
