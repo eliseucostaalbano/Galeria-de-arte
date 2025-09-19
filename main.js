@@ -27,7 +27,6 @@ const artistas = [
   'George Seurat'
 ];
 
-
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
@@ -36,20 +35,27 @@ document.body.appendChild( renderer.domElement );
 const cena = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-const geometria = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cubo = new THREE.Mesh( geometria, material );
-cena.add( cubo );
+const root = new THREE.Object3D();
+cena.add(root);
 
-camera.position.z = 5;
+let count = 6;
+for (let i = 0; i < count; i++) {
+  const base = new THREE.Object3D();
+  base.rotation.y = i *  (2 * Math.PI / count);
+  root.add(base);
+
+const arte = new THREE.Mesh(
+  new THREE.BoxGeometry(3, 2, 0.01),
+  new THREE.MeshBasicMaterial({ color: 0xf08080 })
+);
+arte.position.z = -4;
+base.add( arte );
+
+}
 
 function animate() {
-
-  cubo.rotation.x += 0.01;
-  cubo.rotation.y += 0.01;
-
+  root.rotation.y += 0.002;
   renderer.render( cena, camera );
-
 }
 
 window.addEventListener( 'resize', () => {
