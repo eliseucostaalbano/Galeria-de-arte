@@ -30,6 +30,9 @@ const artistas = [
 ];
 
 const textureLoader = new THREE.TextureLoader();
+const texturaSetaEsquerda = textureLoader.load( './img/left.png' );
+const texturaSetaDireita = textureLoader.load( './img/right.png' );
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
@@ -63,6 +66,20 @@ const arte = new THREE.Mesh(
 arte.position.z = -4;
 base.add( arte );
 
+const setaEsquerda = new THREE.Mesh(
+  new THREE.BoxGeometry(0.3, 0.3, 0.01),
+  new THREE.MeshStandardMaterial({ map: texturaSetaEsquerda  , transparent: true })
+);
+setaEsquerda.position.set(-1.8, 0, -4);
+base.add( setaEsquerda );
+
+const setaDireita = new THREE.Mesh(
+  new THREE.BoxGeometry(0.3, 0.3, 0.01),
+  new THREE.MeshStandardMaterial({ map: texturaSetaDireita  , transparent: true })
+);
+setaDireita.position.set(1.8, 0, -4);
+base.add( setaDireita );
+
 }
 
 const holoFote = new THREE.SpotLight(0xffffff, 100.0, 10, 0.65, 1);
@@ -85,7 +102,6 @@ cena.add( espelho );
 
 
 function animate() {
-  root.rotation.y += 0.002;
   renderer.render( cena, camera );
 }
 
