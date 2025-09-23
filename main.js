@@ -57,7 +57,6 @@ const borda = new THREE.Mesh(
     new THREE.BoxGeometry(3.2, 2.2, 0.09),
     new THREE.MeshStandardMaterial({ color: 0x202020 })
 );
-borda.name = `Borda_${i}`;
 borda.position.z = -4.05;
 base.add( borda );
 
@@ -65,7 +64,6 @@ const arte = new THREE.Mesh(
   new THREE.BoxGeometry(3, 2, 0.01),
   new THREE.MeshStandardMaterial({ map: textura })
 );
-arte.name = `Arte_${i}`;
 arte.position.z = -4;
 base.add( arte );
 
@@ -74,6 +72,7 @@ const setaEsquerda = new THREE.Mesh(
   new THREE.MeshStandardMaterial({ map: texturaSetaEsquerda  , transparent: true })
 );
 setaEsquerda.name = "Esquerda";
+setaEsquerda.userData = (i=== count -1) ? 0 : i + 1;
 setaEsquerda.position.set(-1.8, 0, -4);
 base.add( setaEsquerda );
 
@@ -82,6 +81,7 @@ const setaDireita = new THREE.Mesh(
   new THREE.MeshStandardMaterial({ map: texturaSetaDireita  , transparent: true })
 );
 setaDireita.name = "Direita";
+setaDireita.userData = (i=== 0) ? count -1 : i - 1;
 setaDireita.position.set(1.8, 0, -4);
 base.add( setaDireita );
 
@@ -105,13 +105,26 @@ espelho.position.y = -1.5;
 espelho.rotateX( - Math.PI / 2 );
 cena.add( espelho );
 
-function girarGaleria(direção) {
+function girarGaleria(direção, newIndex) {
   const deltaY = direção * (2 * Math.PI / count);
 
   new TWEEN.Tween(root.rotation)
     .to( { y: root.rotation.y + deltaY })
     .easing(TWEEN.Easing.Quadratic.Out)
-    .start();
+    .start()
+    .onStart(() => {
+      document.getElementById("titulo").innerText = titulos[newIndex];
+      document.getElementById("artista").innerText = artistas[newIndex];
+      document.getElementById("titulo").style.opacity = 0;
+     document.getElementById("artista").style.opacity = 0;
+    })
+    .onComplete(() => {
+      document.getElementById("titulo").innerText = titulos[newIndex];
+      document.getElementById("artista").innerText = artistas[newIndex];
+      document.getElementById("titulo").style.opacity = 1;
+      document.getElementById("artista").style.opacity = 1;
+    });
+
 }
 
 function animate() {
@@ -135,12 +148,17 @@ window.addEventListener( 'click', (e) => {
  );
  raycaster.setFromCamera(mouse, camera);
  const intersecao = raycaster.intersectObject(root, true);
+  const obj = intersecao[0].object;
+  const newIndex = obj.userData;
  if (intersecao.length > 0) {
-      if(intersecao[0].object.name === "Esquerda") {
-        girarGaleria(-1);
+      if(obj.name === "Esquerda") {
+        girarGaleria(-1, newIndex);
       }
-      if(intersecao[0].object.name === "Direita") {
-        girarGaleria(1);
+      if(obj.name === "Direita") {
+        girarGaleria(1, newIndex);
       }
     }
 });
+
+document.getElementById("titulo").innerText = titulos[0];
+document.getElementById("artista").innerText = artistas[0];
