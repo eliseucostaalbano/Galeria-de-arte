@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from 'three/addons/objects/Reflector.js';
+import * as TWEEN from 'tween';
 
 
 const imagens = [
@@ -56,6 +57,7 @@ const borda = new THREE.Mesh(
     new THREE.BoxGeometry(3.2, 2.2, 0.09),
     new THREE.MeshStandardMaterial({ color: 0x202020 })
 );
+borda.name = `Borda_${i}`;
 borda.position.z = -4.05;
 base.add( borda );
 
@@ -63,6 +65,7 @@ const arte = new THREE.Mesh(
   new THREE.BoxGeometry(3, 2, 0.01),
   new THREE.MeshStandardMaterial({ map: textura })
 );
+arte.name = `Arte_${i}`;
 arte.position.z = -4;
 base.add( arte );
 
@@ -70,6 +73,7 @@ const setaEsquerda = new THREE.Mesh(
   new THREE.BoxGeometry(0.3, 0.3, 0.01),
   new THREE.MeshStandardMaterial({ map: texturaSetaEsquerda  , transparent: true })
 );
+setaEsquerda.name = "Esquerda";
 setaEsquerda.position.set(-1.8, 0, -4);
 base.add( setaEsquerda );
 
@@ -77,6 +81,7 @@ const setaDireita = new THREE.Mesh(
   new THREE.BoxGeometry(0.3, 0.3, 0.01),
   new THREE.MeshStandardMaterial({ map: texturaSetaDireita  , transparent: true })
 );
+setaDireita.name = "Direita";
 setaDireita.position.set(1.8, 0, -4);
 base.add( setaDireita );
 
@@ -100,8 +105,17 @@ espelho.position.y = -1.5;
 espelho.rotateX( - Math.PI / 2 );
 cena.add( espelho );
 
+function girarGaleria(direção) {
+  const deltaY = direção * (2 * Math.PI / count);
+
+  new TWEEN.Tween(root.rotation)
+    .to( { y: root.rotation.y + deltaY })
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .start();
+}
 
 function animate() {
+  TWEEN.update();
   renderer.render( cena, camera );
 }
 
@@ -111,4 +125,22 @@ window.addEventListener( 'resize', () => {
   renderer.setSize( window.innerWidth, window.innerHeight );
 
   espelho.getRenderTarget().setSize( window.innerWidth, window.innerHeight );
+});
+
+window.addEventListener( 'click', (e) => {
+ const raycaster = new THREE.Raycaster();
+ const mouse = new THREE.Vector2(
+   (e.clientX / window.innerWidth) * 2 - 1,
+   - (e.clientY / window.innerHeight) * 2 + 1
+ );
+ raycaster.setFromCamera(mouse, camera);
+ const intersecao = raycaster.intersectObject(root, true);
+ if (intersecao.length > 0) {
+      if(intersecao[0].object.name === "Esquerda") {
+        girarGaleria(-1);
+      }
+      if(intersecao[0].object.name === "Direita") {
+        girarGaleria(1);
+      }
+    }
 });
